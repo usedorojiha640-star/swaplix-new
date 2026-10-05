@@ -599,8 +599,8 @@ body {
   background: linear-gradient(135deg, #2fbf8f 0%, #26A17B 50%, #1a7a5c 100%);
 }
 
-.coin-icon.pln {
-  background: linear-gradient(135deg, #e05a5a 0%, #D32F2F 50%, #a51f1f 100%);
+.coin-icon.gbp {
+  background: linear-gradient(135deg, #9b7ede 0%, #6f42c1 50%, #4a2d7a 100%);
 }
 
 .locations {
@@ -850,6 +850,7 @@ body {
 
 .how-step-card {
   flex: 1;
+  min-width: 0;
   background: linear-gradient(180deg, #111816 0%, #0d1211 100%);
   border: 1px solid rgba(166,255,0,0.15);
   border-radius: 18px;
@@ -858,6 +859,9 @@ body {
   position: relative;
   transition: all 0.3s ease;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
 }
 
 .how-step-card::before {

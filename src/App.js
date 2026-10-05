@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
+import { Fragment, useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import './App.css';
 import {
   ShieldCheck as IconShield,
@@ -14,7 +14,7 @@ import {
   ArrowUp as IconArrowUp,
 } from 'lucide-react';
 import { SiTether as CoinTether } from 'react-icons/si';
-import { FaDollarSign as CoinDollar, FaEuroSign as CoinEuro, FaMoneyBillWave as CoinCash } from 'react-icons/fa';
+import { FaDollarSign as CoinDollar, FaEuroSign as CoinEuro, FaPoundSign as CoinPound } from 'react-icons/fa';
 
 const CONTACT_LINK = "https://t.me/+2ktARr9AH1Q4YjI0";
 
@@ -24,7 +24,7 @@ const CURRENCY_MAP = {
   USD: { badge: 'usd', Glyph: CoinDollar },
   EUR: { badge: 'eur', Glyph: CoinEuro },
   USDT: { badge: 'usdt', Glyph: CoinTether },
-  PLN: { badge: 'pln', Glyph: CoinCash },
+  GBP: { badge: 'gbp', Glyph: CoinPound },
 };
 
 const TRUST_POINTS = [
@@ -34,50 +34,50 @@ const TRUST_POINTS = [
 ];
 
 const WHY_ITEMS = [
-  { Icon: IconShield, headline: 'Лучшие рейтинги', copy: 'Проверенный обменный пункт с безупречной репутацией' },
-  { Icon: IconMap, headline: 'Местный опыт', copy: 'Работаем в Польше, знаем рынок и потребности клиентов' },
-  { Icon: IconLock, headline: 'Безопасность превыше всего', copy: 'Все сделки только при личной встрече' },
+  { Icon: IconShield, headline: 'Лучшие рейтинги', copy: 'Проверенный сервис с безупречной репутацией' },
+  { Icon: IconGlobe, headline: 'Международный опыт', copy: 'Работаем по всему миру, знаем рынок и потребности клиентов' },
+  { Icon: IconLock, headline: 'Безопасность превыше всего', copy: 'Все операции проходят с максимальной защитой' },
   { Icon: IconShield, headline: 'Максимальная защита', copy: 'Гарантия конфиденциальности и анонимности' },
 ];
 
-const CITY_LIST = ['Варшава', 'Вроцлав', 'Гданьск', 'Гдыня', 'Краков', 'Лодзь', 'Познань', 'Щецин'];
+const CITY_LIST = ['Дубай', 'Стамбул', 'Берлин', 'Лондон', 'Варшава', 'Прага', 'Тбилиси', 'Ереван'];
 
 const CONVERSION_LIST = [
-  { src: 'USDT', dst: 'PLN', srcName: 'Tether', dstName: 'Польские злотые' },
   { src: 'USDT', dst: 'USD', srcName: 'Tether', dstName: 'Доллары' },
   { src: 'USDT', dst: 'EUR', srcName: 'Tether', dstName: 'Евро' },
-  { src: 'PLN', dst: 'USDT', srcName: 'Польские злотые', dstName: 'Tether' },
+  { src: 'USDT', dst: 'GBP', srcName: 'Tether', dstName: 'Фунты' },
   { src: 'USD', dst: 'USDT', srcName: 'Доллары', dstName: 'Tether' },
   { src: 'EUR', dst: 'USDT', srcName: 'Евро', dstName: 'Tether' },
+  { src: 'GBP', dst: 'USDT', srcName: 'Фунты', dstName: 'Tether' },
 ];
 
 const PROCESS_STAGES = [
   { idx: 1, Icon: IconSend, name: 'Связь', note: 'Напишите нам в Telegram' },
-  { idx: 2, Icon: IconClock, name: 'Согласование', note: 'Курс, сумма, место, время' },
-  { idx: 3, Icon: IconMap, name: 'Встреча', note: 'Личный визит в офис' },
-  { idx: 4, Icon: IconShield, name: 'Обмен', note: 'Физический обмен на месте' },
+  { idx: 2, Icon: IconClock, name: 'Согласование', note: 'Курс, сумма, способ перевода' },
+  { idx: 3, Icon: IconGlobe, name: 'Перевод', note: 'Отправка в любую точку мира' },
+  { idx: 4, Icon: IconShield, name: 'Получение', note: 'Средства зачислены получателю' },
 ];
 
 const ADVANTAGE_ITEMS = [
-  { Icon: IconLock, headline: 'Безопасность', copy: 'Только личные встречи' },
-  { Icon: IconClock, headline: 'Автоматизация', copy: 'Быстрое согласование' },
+  { Icon: IconLock, headline: 'Безопасность', copy: 'Защищённые транзакции' },
+  { Icon: IconClock, headline: 'Автоматизация', copy: 'Быстрая обработка' },
   { Icon: IconShield, headline: 'Выгода', copy: 'Лучшие курсы' },
-  { Icon: IconMap, headline: 'Гибкость', copy: 'Под ваш график' },
+  { Icon: IconGlobe, headline: 'Гибкость', copy: 'Переводы по всему миру' },
   { Icon: IconShield, headline: 'Комфорт', copy: 'Без бюрократии' },
   { Icon: IconShield, headline: 'Доверие', copy: 'Проверенная репутация' },
 ];
 
 const QA_LIST = [
-  { q: 'Почему стоит выбрать SWAP LIX?', a: 'Мы предлагаем физический обмен криптовалют с личной встречей. Это гарантирует безопасность, конфиденциальность и лучшие курсы.' },
-  { q: 'Какие валюты вы обмениваете?', a: 'USDT на польские злотые, доллары и евро, а также обратный обмен.' },
-  { q: 'Какие способы оплаты?', a: 'Наличные при личной встрече. Мы не работаем с картами и онлайн-переводами.' },
-  { q: 'Как происходит наличный обмен?', a: 'Вы связываетесь с менеджером, согласовываете детали и приезжаете в офис. Обмен производится на месте.' },
+  { q: 'Почему стоит выбрать SWAP LIX?', a: 'Мы предлагаем международные переводы и обмен криптовалют. Это гарантирует безопасность, конфиденциальность и лучшие курсы.' },
+  { q: 'Какие валюты вы обмениваете?', a: 'USDT на доллары, евро и фунты, а также обратный обмен.' },
+  { q: 'Какие способы перевода?', a: 'Работаем с банковскими переводами, криптовалютой и другими удобными способами. Детали согласовываем индивидуально.' },
+  { q: 'Как проходит перевод?', a: 'Вы связываетесь с менеджером, согласовываете детали, и мы отправляем средства в любую точку мира.' },
   { q: 'Какой курс обмена?', a: 'Актуальный курс узнавайте у менеджера в Telegram. Курс фиксируется до сделки.' },
   { q: 'Какие комиссии?', a: 'Минимальные. Точную комиссию согласовываем до сделки, без скрытых платежей.' },
   { q: 'Нужна ли верификация KYC?', a: 'Нет. Мы не требуем верификацию или регистрацию.' },
-  { q: 'Вы работаете 24/7?', a: 'Служба поддержки 24/7. Обмен по предварительной записи ежедневно с 09:00 до 20:00.' },
+  { q: 'Вы работаете 24/7?', a: 'Служба поддержки 24/7. Переводы обрабатываются ежедневно с 09:00 до 20:00.' },
   { q: 'Есть ли реферальная программа?', a: 'На данный момент нет. Но мы ценим постоянных клиентов.' },
-  { q: 'Можно ли обменять крупные суммы?', a: 'Да. Детали крупных сумм обсуждаются с менеджером индивидуально.' },
+  { q: 'Можно ли перевести крупные суммы?', a: 'Да. Детали крупных сумм обсуждаются с менеджером индивидуально.' },
 ];
 
 const NAV_MENU = [
@@ -89,8 +89,8 @@ const NAV_MENU = [
 const DROPDOWN_USEFUL = [
   { href: '#why', text: 'О Нас' },
   { href: '#faq', text: 'FAQ' },
-  { href: '#locations', text: 'Города' },
-  { href: '#how', text: 'Как проходит обмен' },
+  { href: '#locations', text: 'География' },
+  { href: '#how', text: 'Как проходит перевод' },
 ];
 
 const DROPDOWN_BUSINESS = [
@@ -103,15 +103,15 @@ const FOOTER_CRYPTO = [
   { href: '#directions', text: 'Направления обменов' },
   { href: '#directions', text: 'Курсы криптовалют' },
   { href: '#directions', text: 'Обмен USDT' },
-  { href: '#directions', text: 'Обмен на PLN' },
   { href: '#directions', text: 'Обмен на USD' },
+  { href: '#directions', text: 'Обмен на EUR' },
 ];
 
 const FOOTER_USEFUL = [
   { href: '#why', text: 'О Нас' },
   { href: '#faq', text: 'FAQ' },
-  { href: '#locations', text: 'Города' },
-  { href: '#how', text: 'Как проходит обмен' },
+  { href: '#locations', text: 'География' },
+  { href: '#how', text: 'Как проходит перевод' },
 ];
 
 /* ---------- утилиты ---------- */
@@ -274,7 +274,7 @@ function TopBar({ isScrolled }) {
         </nav>
 
         <div className="header-right">
-          <button className="lang-btn"><IconGlobe className="lang-icon" /> PL</button>
+          <button className="lang-btn"><IconGlobe className="lang-icon" /> EN</button>
           <a href={CONTACT_LINK} target="_blank" rel="noopener noreferrer" className="header-tg">
             Написать в Telegram <TelegramGlyph className="header-tg-icon" />
           </a>
@@ -329,12 +329,12 @@ function HeroBanner() {
             ))}
           </div>
           <h1 className="hero-title">
-            Обмен криптовалюты –<br />
+            Международные переводы –<br />
             <span className="hero-accent">быстро, выгодно и легко</span>
           </h1>
           <p className="hero-desc">
-            SWAP LIX — физический обмен криптовалют в Польше.
-            Назначаем время и место встречи. Вы приходите и совершаете обмен лично.
+            SWAP LIX — международные переводы и обмен криптовалют по всему миру.
+            Отправляйте средства в любую точку мира быстро и безопасно.
           </p>
           <a href={CONTACT_LINK} target="_blank" rel="noopener noreferrer" className="btn-primary pulse">
             <TelegramGlyph className="btn-icon" /> НАПИСАТЬ МЕНЕДЖЕРУ
@@ -351,7 +351,7 @@ function HeroBanner() {
 
 function StatsBar() {
   const items = [
-    { value: '300+', label: 'Обменных операций в день' },
+    { value: '300+', label: 'Переводов в день' },
     { value: '14', label: 'Лет на рынке' },
     { value: '20000+', label: 'Довольных клиентов' },
     { value: '50+', label: 'Поддерживаемых валют' },
@@ -374,8 +374,8 @@ function WhySection() {
   return (
     <section className="why" id="why">
       <div className="section-inner">
-        <div className="eyebrow">ТОРГУЙТЕ ВЫГОДНО И БЕЗОПАСНО</div>
-        <h2 className="section-title">Почему SWAP LIX – это №1 криптообменник</h2>
+        <div className="eyebrow">ПЕРЕВОДИТЕ ВЫГОДНО И БЕЗОПАСНО</div>
+        <h2 className="section-title">Почему SWAP LIX – это №1 сервис переводов</h2>
         <div className="why-grid">
           {WHY_ITEMS.map(({ Icon, headline, copy }) => (
             <div className="why-card" key={headline}>
@@ -395,7 +395,7 @@ function LocationsSection() {
     <section className="locations" id="locations">
       <div className="section-inner">
         <div className="eyebrow">ПРОВЕРЬТЕ ДОСТУПНОСТЬ</div>
-        <h2 className="section-title">Доступно в городах Польши</h2>
+        <h2 className="section-title">Доступно по всему миру</h2>
         <div className="locations-grid">
           {CITY_LIST.map((city) => (
             <div className="location-card" key={city}>
@@ -418,8 +418,8 @@ function CashBanner() {
             <div className="cash-icon-wrap"><IconShield className="cash-icon" /></div>
             <div>
               <div className="eyebrow">КОНТРОЛИРУЙТЕ СВОИ ФИНАНСЫ</div>
-              <h2 className="cash-title">Обналичивайте USDT в удобном для вас месте</h2>
-              <p className="cash-desc">Легко конвертируйте криптовалюту в реальные деньги при личной встрече.</p>
+              <h2 className="cash-title">Отправляйте USDT в любую точку мира</h2>
+              <p className="cash-desc">Легко конвертируйте криптовалюту и отправляйте средства получателю быстро и безопасно.</p>
             </div>
           </div>
           <div className="cash-right">
@@ -427,7 +427,7 @@ function CashBanner() {
               <CurrencyBadge code="USDT" />
               <CurrencyBadge code="USD" />
               <CurrencyBadge code="EUR" />
-              <CurrencyBadge code="PLN" />
+              <CurrencyBadge code="GBP" />
             </div>
             <a href={CONTACT_LINK} target="_blank" rel="noopener noreferrer" className="btn-primary">
               <TelegramGlyph className="btn-icon" /> Связаться с менеджером
@@ -460,22 +460,26 @@ function ProcessSection() {
     <section className="how" id="how">
       <div className="section-inner">
         <div className="eyebrow">ПРОСТОЙ ПРОЦЕСС</div>
-        <h2 className="section-title">Как проходит обмен</h2>
+        <h2 className="section-title">Как проходит перевод</h2>
         <div className="how-timeline">
           {PROCESS_STAGES.map(({ idx, Icon, name, note }, position) => (
-            <FadeBlock key={idx}>
+            <Fragment key={idx}>
               {position > 0 && (
-                <div className="how-connector"><IconChevronRight className="connector-arrow" /></div>
+                <div className="how-connector">
+                  <IconChevronRight className="connector-arrow" />
+                </div>
               )}
               <div className="how-step-card">
                 <div className="how-step-header">
                   <div className="how-num">{idx}</div>
-                  <div className="how-step-icon"><Icon className="how-icon-svg" /></div>
+                  <div className="how-step-icon">
+                    <Icon className="how-icon-svg" />
+                  </div>
                 </div>
                 <h3>{name}</h3>
                 <p>{note}</p>
               </div>
-            </FadeBlock>
+            </Fragment>
           ))}
         </div>
       </div>
@@ -488,7 +492,7 @@ function BenefitsSection() {
     <section className="benefits">
       <div className="section-inner">
         <div className="eyebrow">ПОЧЕМУ МЫ</div>
-        <h2 className="section-title">Лучший обменник криптовалют с минимальными комиссиями!</h2>
+        <h2 className="section-title">Лучший сервис переводов с минимальными комиссиями!</h2>
         <div className="benefits-grid">
           {ADVANTAGE_ITEMS.map(({ Icon, headline, copy }) => (
             <div className="benefit-card" key={headline}>
@@ -549,7 +553,7 @@ function FinalCall() {
   return (
     <section className="cta">
       <div className="cta-inner">
-        <h2>Готовы к обмену?</h2>
+        <h2>Готовы к переводу?</h2>
         <p>Напишите нам в Telegram и получите лучший курс прямо сейчас!</p>
         <a href={CONTACT_LINK} target="_blank" rel="noopener noreferrer" className="btn-primary pulse">
           <TelegramGlyph className="btn-icon" /> НАПИСАТЬ МЕНЕДЖЕРУ
@@ -565,7 +569,7 @@ function SiteFooter() {
       <div className="footer-inner">
         <div className="footer-col footer-brand">
           <img src="/logo.png" alt="SWAP LIX" className="footer-logo" />
-          <p>Физический обмен криптовалют в Польше. Безопасно, быстро, конфиденциально.</p>
+          <p>Международные переводы и обмен криптовалют. Безопасно, быстро, конфиденциально.</p>
         </div>
 
         <div className="footer-col">
@@ -585,7 +589,7 @@ function SiteFooter() {
         </div>
       </div>
       <div className="footer-bottom">
-        <span>© 2024 SWAP LIX. Физический обмен криптовалют в Польше.</span>
+        <span>© 2024 SWAP LIX. Международные переводы и обмен криптовалют.</span>
       </div>
     </footer>
   );
