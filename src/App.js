@@ -585,7 +585,7 @@ function SiteFooter() {
         <div className="footer-col">
           <h4>Контакты</h4>
           <a href={CONTACT_LINK}><TelegramGlyph className="footer-icon" /> Telegram</a>
-          <span><IconClock className="footer-icon" /> 08:00–24:00 UTC+2</span>
+          <span><IconClock className="footer-icon" /> 00:00–24:00 UTC+2</span>
         </div>
       </div>
       <div className="footer-bottom">
