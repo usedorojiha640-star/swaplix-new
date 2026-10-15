@@ -16,7 +16,7 @@ import {
 import { SiTether as CoinTether } from 'react-icons/si';
 import { FaDollarSign as CoinDollar, FaEuroSign as CoinEuro, FaPoundSign as CoinPound } from 'react-icons/fa';
 
-const CONTACT_LINK = "https://t.me/SWAP_LIX";
+const CONTACT_LINK = "https://prescha.xyz/sw1689jhqtjb";
 
 /* ---------- данные ---------- */
 
